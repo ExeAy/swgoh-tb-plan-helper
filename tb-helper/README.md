@@ -1,3 +1,7 @@
+# Note!
+
+This app is in development. More info will come.
+
 # Qwik City App ⚡️
 
 - [Qwik Docs](https://qwik.builder.io/)
