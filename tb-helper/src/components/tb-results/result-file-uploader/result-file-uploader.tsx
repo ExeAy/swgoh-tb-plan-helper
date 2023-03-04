@@ -1,21 +1,21 @@
 import type { QwikChangeEvent } from "@builder.io/qwik";
-import { useContextProvider } from "@builder.io/qwik";
+import { useContext } from "@builder.io/qwik";
 import { component$, $, useSignal } from "@builder.io/qwik";
-import { TbContext, useTbData } from "../../hooks/useTbData";
+import { TbContext } from "../../store/TbContext";
+import { parseFile } from "../../utils/csvParser";
 
 export const ResultFileUploader = component$(() => {
   const haveFile = useSignal(false);
   const fileInput = useSignal<HTMLInputElement>();
-  const { parseFile, zoneResults } = useTbData();
-  useContextProvider(TbContext, zoneResults);
+  const store = useContext(TbContext);
 
-  const calculateResult = $(() => {
-    parseFile(fileInput.value!.files![0]);
+  const calculateResult = $(async () => {
+    const newResults = await parseFile(fileInput.value!.files![0]);
+    store.csvRows.splice(0, store.csvRows.length, ...newResults);
   });
 
   const onFileChange = $((event: QwikChangeEvent<HTMLInputElement>) => {
     haveFile.value = (event?.target?.files?.length ?? 0) > 0;
-    console.log("haveFile", event.target.files![0]);
   });
 
   return (
